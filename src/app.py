@@ -85,7 +85,7 @@ def main():
         )
         st.image(highlighted_image, caption='Uploaded Image.', use_column_width=True)
 
-        if st.sidebar.checkbox('推論'):
+        if not st.sidebar.checkbox('推論ストップ'):
             croped_image = image.crop(
                 (width_range[0], height_range[0], width_range[1], height_range[1])
             )
