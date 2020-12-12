@@ -47,14 +47,14 @@ def main():
             min_value=0,
             max_value=image.width - 1,
             value=(0, image.width - 1),
-            step=100,
+            step=1,
         )
         height_range = st.sidebar.slider(
             '縦',
             min_value=0,
             max_value=image.height - 1,
             value=(0, image.height - 1),
-            step=100,
+            step=1,
         )
 
         highlighted_image = image.copy()
@@ -85,10 +85,11 @@ def main():
         )
         st.image(highlighted_image, caption='Uploaded Image.', use_column_width=True)
 
+        croped_image = image.crop(
+            (width_range[0], height_range[0], width_range[1], height_range[1])
+        ).convert('RGB')
+
         if not st.sidebar.checkbox('推論ストップ'):
-            croped_image = image.crop(
-                (width_range[0], height_range[0], width_range[1], height_range[1])
-            )
             labels = predict(croped_image)
 
             df = pd.DataFrame(
