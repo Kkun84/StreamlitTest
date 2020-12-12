@@ -3,6 +3,8 @@
 /notebook/lightning_logs/
 /.vscode/settings.json
 
+.DS_Store
+
 /.env
 /.notifier
 /nohup.out
