@@ -6,9 +6,9 @@ import torch
 import plotly.express as px
 
 
+@st.cache
 def predict(pillow_image):
     with torch.no_grad():
-        # https://pytorch.org/docs/stable/torchvision/models.html
         transform = transforms.Compose(
             [
                 transforms.Resize(224),
@@ -19,7 +19,8 @@ def predict(pillow_image):
             ]
         )
 
-        model = models.mobilenet_v2(pretrained=True)
+        # https://pytorch.org/docs/stable/torchvision/models.htmlv2(pretrained=True)
+        model = models.mobilenet_
 
         batch = torch.unsqueeze(transform(pillow_image), 0)
 
