@@ -19,8 +19,8 @@ def predict(pillow_image):
             ]
         )
 
-        # https://pytorch.org/docs/stable/torchvision/models.htmlv2(pretrained=True)
-        model = models.mobilenet_
+        # https://pytorch.org/docs/stable/torchvision/models.html
+        model = models.resnet50(pretrained=True)
 
         batch = torch.unsqueeze(transform(pillow_image), 0)
 
