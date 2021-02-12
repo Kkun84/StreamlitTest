@@ -44,14 +44,14 @@ def main():
         image = Image.open(uploaded_file)
 
         width_range = st.sidebar.slider(
-            '横',
+            '横の入力範囲',
             min_value=0,
             max_value=image.width - 1,
             value=(0, image.width - 1),
             step=1,
         )
         height_range = st.sidebar.slider(
-            '縦',
+            '縦の入力範囲（←上 下→）',
             min_value=0,
             max_value=image.height - 1,
             value=(0, image.height - 1),
