@@ -119,12 +119,8 @@ def main():
             value=(0, image.height - 1),
             step=1,
         )
-    is_cropped = [
-        input_area['top'],
-        input_area['left'],
-        input_area['bottom'],
-        input_area['right'],
-    ] == [0, 0, image.width - 1, image.height - 1]
+        input_area['right'] += 1
+        input_area['bottom'] += 1
 
     highlighted_image = make_highlighted_image(image, input_area)
     cropped_image = image.crop(
@@ -136,7 +132,8 @@ def main():
         )
     ).convert('RGB')
 
-    is_cropped = image.size == highlighted_image.size
+    is_cropped = image.size != cropped_image.size
+    image.size, cropped_image.size, is_cropped
 
     st.image(highlighted_image, caption='アップロード画像', use_column_width=True)
     with st.sidebar:
