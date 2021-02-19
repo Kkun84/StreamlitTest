@@ -1,9 +1,10 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 import torch
+import torch.nn.functional as F
 from PIL import Image, ImageDraw
 from torchvision import models, transforms
 
@@ -18,7 +19,7 @@ transform = transforms.Compose(
 
 
 @st.cache
-def predict(image: Image.Image) -> List[Tuple[int, str, float]]:
+def predict(image: Image.Image) -> List[tuple]:
     with torch.no_grad():
 
         # https://pytorch.org/docs/stable/torchvision/models.html
@@ -32,15 +33,17 @@ def predict(image: Image.Image) -> List[Tuple[int, str, float]]:
         with open('imagenet_classes.txt') as f:
             id, class_name = zip(*[line.strip().split(', ') for line in f.readlines()])
 
-        probability = torch.nn.functional.softmax(predicted, dim=1)[0]
+        probability = F.softmax(predicted, dim=1)[0]
         _, indices = torch.sort(predicted, descending=True)
     return [(class_name[index], probability[index].item()) for index in indices[0]]
 
 
-def make_highlighted_image(image: Image.Image, highlight_area: Dict[str, int]) -> Image:
+def make_highlighted_image(
+    image: Image.Image, highlight_area: Dict[str, int]
+) -> Image.Image:
     assert set(highlight_area) == {'top', 'bottom', 'left', 'right'}
     highlighted_image = image.copy()
-    draw = ImageDraw.Draw(highlighted_image, 'RGBA')
+    draw: ImageDraw.ImageDraw = ImageDraw.Draw(highlighted_image, 'RGBA')
     draw.rectangle(
         (0, 0, image.width - 1, highlight_area['top'] - 1),
         fill=(0,) * 3 + (0x80,),
