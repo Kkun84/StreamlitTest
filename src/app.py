@@ -37,6 +37,7 @@ def predict(pillow_image):
 
 def main():
     st.title('画像分類アプリ')
+    st.markdown('GitHub: [https://github.com/Kkun84/StreamlitTest](https://github.com/Kkun84/StreamlitTest)')
 
     uploaded_file = st.file_uploader('', type=['png', 'ping', 'jpg'])
 
