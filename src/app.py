@@ -133,7 +133,6 @@ def main():
     ).convert('RGB')
 
     is_cropped = image.size != cropped_image.size
-    image.size, cropped_image.size, is_cropped
 
     st.image(highlighted_image, caption='アップロード画像', use_column_width=True)
     with st.sidebar:
