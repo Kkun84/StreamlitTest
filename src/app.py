@@ -41,77 +41,79 @@ def main():
 
     uploaded_file = st.file_uploader('', type=['png', 'ping', 'jpg'])
 
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
+    if uploaded_file is None:
+        return
 
-        width_range = st.sidebar.slider(
-            '横の入力範囲',
-            min_value=0,
-            max_value=image.width - 1,
-            value=(0, image.width - 1),
-            step=1,
-        )
-        height_range = st.sidebar.slider(
-            '縦の入力範囲（←上 下→）',
-            min_value=0,
-            max_value=image.height - 1,
-            value=(0, image.height - 1),
-            step=1,
-        )
+    image = Image.open(uploaded_file)
 
-        highlighted_image = image.copy()
-        draw = ImageDraw.Draw(highlighted_image, 'RGBA')
-        draw.rectangle(
-            (0, 0, image.width - 1, height_range[0] - 1),
-            fill=(0,) * 3 + (0x80,),
-            width=0,
-            outline=(0xFF,) * 4,
-        )
-        draw.rectangle(
-            (0, height_range[0], width_range[0] - 1, height_range[1] - 1),
-            fill=(0,) * 3 + (0x80,),
-            width=0,
-            outline=(0xFF,) * 4,
-        )
-        draw.rectangle(
-            (width_range[1], height_range[0], image.width - 1, height_range[1] - 1),
-            fill=(0,) * 3 + (0x80,),
-            width=0,
-            outline=(0xFF,) * 4,
-        )
-        draw.rectangle(
-            (0, height_range[1], image.width - 1, image.height - 1),
-            fill=(0,) * 3 + (0x80,),
-            width=0,
-            outline=(0xFF,) * 4,
-        )
-        st.image(highlighted_image, caption='Uploaded Image.', use_column_width=True)
+    width_range = st.sidebar.slider(
+        '横の入力範囲',
+        min_value=0,
+        max_value=image.width - 1,
+        value=(0, image.width - 1),
+        step=1,
+    )
+    height_range = st.sidebar.slider(
+        '縦の入力範囲（←上 下→）',
+        min_value=0,
+        max_value=image.height - 1,
+        value=(0, image.height - 1),
+        step=1,
+    )
 
-        croped_image = image.crop(
-            (width_range[0], height_range[0], width_range[1], height_range[1])
-        ).convert('RGB')
+    highlighted_image = image.copy()
+    draw = ImageDraw.Draw(highlighted_image, 'RGBA')
+    draw.rectangle(
+        (0, 0, image.width - 1, height_range[0] - 1),
+        fill=(0,) * 3 + (0x80,),
+        width=0,
+        outline=(0xFF,) * 4,
+    )
+    draw.rectangle(
+        (0, height_range[0], width_range[0] - 1, height_range[1] - 1),
+        fill=(0,) * 3 + (0x80,),
+        width=0,
+        outline=(0xFF,) * 4,
+    )
+    draw.rectangle(
+        (width_range[1], height_range[0], image.width - 1, height_range[1] - 1),
+        fill=(0,) * 3 + (0x80,),
+        width=0,
+        outline=(0xFF,) * 4,
+    )
+    draw.rectangle(
+        (0, height_range[1], image.width - 1, image.height - 1),
+        fill=(0,) * 3 + (0x80,),
+        width=0,
+        outline=(0xFF,) * 4,
+    )
+    st.image(highlighted_image, caption='Uploaded Image.', use_column_width=True)
 
-        labels = predict(croped_image)
+    croped_image = image.crop(
+        (width_range[0], height_range[0], width_range[1], height_range[1])
+    ).convert('RGB')
 
-        df = pd.DataFrame(
-            labels,
-            columns=['id, name', 'prob.[%]'],
-            index=range(1, len(labels) + 1),
-        )
-        df['prob.[%]'] *= 100
-        df['cumulative prob.[%]'] = df['prob.[%]'].cumsum()
-        df = df[df['prob.[%]'] > 1]
+    labels = predict(croped_image)
 
-        fig = px.bar(
-            x=df['id, name'],
-            y=df['prob.[%]'],
-            labels={'x': 'id, name', 'y': 'prob.[%]'},
-            range_y=[0, 100],
-        )
-        st.plotly_chart(fig, use_container_width=True)
+    df = pd.DataFrame(
+        labels,
+        columns=['id, name', 'prob.[%]'],
+        index=range(1, len(labels) + 1),
+    )
+    df['prob.[%]'] *= 100
+    df['cumulative prob.[%]'] = df['prob.[%]'].cumsum()
+    df = df[df['prob.[%]'] > 1]
 
-        st.table(df)
-return
+    fig = px.bar(
+        x=df['id, name'],
+        y=df['prob.[%]'],
+        labels={'x': 'id, name', 'y': 'prob.[%]'},
+        range_y=[0, 100],
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.table(df)
+    return
 
 
 if __name__ == "__main__":
