@@ -90,28 +90,27 @@ def main():
             (width_range[0], height_range[0], width_range[1], height_range[1])
         ).convert('RGB')
 
-        if not st.sidebar.checkbox('推論ストップ'):
-            labels = predict(croped_image)
+        labels = predict(croped_image)
 
-            df = pd.DataFrame(
-                labels,
-                columns=['id, name', 'prob.[%]'],
-                index=range(1, len(labels) + 1),
-            )
-            df['prob.[%]'] *= 100
-            df['cumulative prob.[%]'] = df['prob.[%]'].cumsum()
-            df = df[df['prob.[%]'] > 1]
+        df = pd.DataFrame(
+            labels,
+            columns=['id, name', 'prob.[%]'],
+            index=range(1, len(labels) + 1),
+        )
+        df['prob.[%]'] *= 100
+        df['cumulative prob.[%]'] = df['prob.[%]'].cumsum()
+        df = df[df['prob.[%]'] > 1]
 
-            fig = px.bar(
-                x=df['id, name'],
-                y=df['prob.[%]'],
-                labels={'x': 'id, name', 'y': 'prob.[%]'},
-                range_y=[0, 100],
-            )
-            st.plotly_chart(fig, use_container_width=True)
+        fig = px.bar(
+            x=df['id, name'],
+            y=df['prob.[%]'],
+            labels={'x': 'id, name', 'y': 'prob.[%]'},
+            range_y=[0, 100],
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
-            st.table(df)
-    return
+        st.table(df)
+return
 
 
 if __name__ == "__main__":
